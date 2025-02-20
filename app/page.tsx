@@ -36,6 +36,111 @@ export default function Home() {
               </div>
             </div>
 
+            <div className="w-full max-w-6xl mx-auto mt-24 mb-16">
+              <h2 className="text-3xl sm:text-4xl font-bold text-center mb-12 text-secondary">Why Choose African SaaS Boilerplate?</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="text-center p-6">
+                  <div className="bg-gray-800/50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-semibold mb-3 text-accent">Local Payment Methods</h3>
+                  <p className="text-gray-400">Support for Paystack, M-Pesa, and other popular African payment gateways</p>
+                </div>
+
+                <div className="text-center p-6">
+                  <div className="bg-gray-800/50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-sunset-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-semibold mb-3 text-sunset-200">Optimized Performance</h3>
+                  <p className="text-gray-400">Built for African internet conditions with offline-first capabilities</p>
+                </div>
+
+                <div className="text-center p-6">
+                  <div className="bg-gray-800/50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-nature-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-semibold mb-3 text-nature-100">Multi-Language Support</h3>
+                  <p className="text-gray-400">Built-in support for major African languages and localization</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="w-full max-w-6xl mx-auto mb-16">
+              <div className="bg-gray-800/50 rounded-2xl p-8 sm:p-12">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                  <div>
+                    <h2 className="text-3xl sm:text-4xl font-bold mb-6 text-primary">Ready for African Enterprises</h2>
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-3">
+                        <svg className="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span className="text-gray-300">USSD Integration Ready</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <svg className="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span className="text-gray-300">SMS Notification System</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <svg className="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span className="text-gray-300">Compliance with African Regulations</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <svg className="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span className="text-gray-300">Local CDN Integration</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="relative">
+                    <div className="aspect-square rounded-2xl bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20 p-8">
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <svg className="w-24 h-24 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="w-full max-w-4xl mx-auto mb-16 text-center">
+              <h2 className="text-3xl sm:text-4xl font-bold mb-6 text-secondary">Start Building Today</h2>
+              <p className="text-xl text-gray-400 mb-8">Join the growing community of African developers building the next generation of SaaS applications</p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <div className="flex items-center gap-2 text-gray-400">
+                  <svg className="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                  </svg>
+                  <span>Quick Setup</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-400">
+                  <svg className="w-6 h-6 text-sunset-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                  <span>Instant Deployment</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-400">
+                  <svg className="w-6 h-6 text-nature-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span>24/7 Support</span>
+                </div>
+              </div>
+            </div>
+
             <div className="flex gap-6 items-center justify-center mt-12">
               <a
                 className="rounded-full bg-primary hover:bg-primary/90 text-white px-10 py-4 font-semibold transition-colors text-lg"
