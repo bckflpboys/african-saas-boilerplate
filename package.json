@@ -10,8 +10,8 @@
   },
   "dependencies": {
     "@headlessui/react": "^2.2.0",
+    "@heroicons/react": "^2.2.0",
     "@paystack/inline-js": "^2.22.2",
-    "@types/bcryptjs": "^2.4.6",
     "bcryptjs": "^3.0.2",
     "cloudinary": "^1.41.3",
     "framer-motion": "^11.18.2",
@@ -26,6 +26,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
