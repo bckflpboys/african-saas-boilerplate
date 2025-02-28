@@ -17,6 +17,8 @@ export interface BlogPost {
   readTime: string;
   imageUrl: string;
   slug: string;
+  isFeatured?: boolean;
+  isBanner?: boolean;
 }
 
 interface BlogCardProps {
