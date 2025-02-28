@@ -2,9 +2,12 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { useSession, signOut } from 'next-auth/react';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { data: session, status } = useSession();
+  const loading = status === 'loading';
 
   return (
     <nav className="bg-black-bg border-b border-gray-800">
@@ -29,12 +32,28 @@ export default function Navbar() {
               <Link href="/docs" className="text-gray-300 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
                 Documentation
               </Link>
-              <Link href="/login" className="text-gray-300 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                Login
-              </Link>
-              <Link href="/signup" className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors">
-                Get Started
-              </Link>
+              {!loading && (session ? (
+                <>
+                  <Link href="/dashboard" className="text-gray-300 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                    Dashboard
+                  </Link>
+                  <button
+                    onClick={() => signOut({ callbackUrl: '/' })}
+                    className="text-gray-300 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                  >
+                    Sign Out
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link href="/auth/signin" className="text-gray-300 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                    Sign In
+                  </Link>
+                  <Link href="/auth/signup" className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors">
+                    Get Started
+                  </Link>
+                </>
+              ))}
             </div>
           </div>
 
@@ -83,12 +102,28 @@ export default function Navbar() {
           <Link href="/docs" className="text-gray-300 hover:text-primary block px-3 py-2 rounded-md text-base font-medium transition-colors">
             Documentation
           </Link>
-          <Link href="/login" className="text-gray-300 hover:text-primary block px-3 py-2 rounded-md text-base font-medium transition-colors">
-            Login
-          </Link>
-          <Link href="/signup" className="bg-primary hover:bg-primary/90 text-white block px-3 py-2 rounded-md text-base font-medium transition-colors">
-            Get Started
-          </Link>
+          {!loading && (session ? (
+            <>
+              <Link href="/dashboard" className="text-gray-300 hover:text-primary block px-3 py-2 rounded-md text-base font-medium transition-colors">
+                Dashboard
+              </Link>
+              <button
+                onClick={() => signOut({ callbackUrl: '/' })}
+                className="text-gray-300 hover:text-primary block px-3 py-2 rounded-md text-base font-medium transition-colors w-full text-left"
+              >
+                Sign Out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link href="/auth/signin" className="text-gray-300 hover:text-primary block px-3 py-2 rounded-md text-base font-medium transition-colors">
+                Sign In
+              </Link>
+              <Link href="/auth/signup" className="bg-primary hover:bg-primary/90 text-white block px-3 py-2 rounded-md text-base font-medium transition-colors">
+                Get Started
+              </Link>
+            </>
+          ))}
         </div>
       </div>
     </nav>
