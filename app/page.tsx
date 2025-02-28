@@ -1,6 +1,27 @@
 import Image from "next/image";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import PricingSection from "@/components/PricingSection";
+import FAQSection from "@/components/FAQSection";
+
+const homeFAQs = [
+  {
+    question: "What makes this boilerplate special for African markets?",
+    answer: "Our boilerplate is specifically designed with African markets in mind, featuring local payment integrations, USSD support, and optimizations for varied internet conditions."
+  },
+  {
+    question: "How easy is it to customize?",
+    answer: "Very easy! The boilerplate is built with TypeScript and follows modern React practices, making it simple to modify and extend according to your needs."
+  },
+  {
+    question: "What payment methods are supported?",
+    answer: "We support various African payment methods including Paystack, mobile money, and bank transfers, with easy integration for additional payment providers."
+  },
+  {
+    question: "Is it mobile-friendly?",
+    answer: "Yes! The boilerplate is fully responsive and optimized for all devices, with special consideration for the high mobile usage in African markets."
+  }
+];
 
 export default function Home() {
   return (
@@ -143,14 +164,14 @@ export default function Home() {
 
             <div className="flex gap-6 items-center justify-center mt-12">
               <a
-                className="rounded-full bg-primary hover:bg-primary/90 text-white px-10 py-4 font-semibold transition-colors text-lg"
-                href="/docs"
+                href="/signup"
+                className="bg-primary hover:bg-primary/90 text-white px-8 py-3 rounded-full font-medium transition-colors"
               >
                 Get Started
               </a>
               <a
-                className="rounded-full border border-gray-700 hover:border-primary px-10 py-4 font-semibold text-gray-300 transition-colors text-lg"
                 href="/docs"
+                className="text-gray-300 hover:text-primary px-8 py-3 rounded-full font-medium transition-colors"
               >
                 Documentation
               </a>
@@ -158,6 +179,28 @@ export default function Home() {
           </main>
         </div>
       </div>
+
+      {/* Features Section */}
+      {/* ... */}
+
+      {/* Add Pricing Section */}
+      <div className="py-20 border-t border-gray-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-16">
+          <h2 className="text-4xl font-bold text-primary mb-6">Simple, Transparent Pricing</h2>
+          <p className="text-xl text-gray-400">Choose the perfect plan to start building your SaaS application</p>
+        </div>
+        <PricingSection />
+      </div>
+
+      {/* Add FAQ Section */}
+      <div className="border-t border-gray-800">
+        <FAQSection
+          title="Common Questions"
+          description="Everything you need to know about the African SaaS Boilerplate"
+          faqs={homeFAQs}
+        />
+      </div>
+
       <Footer />
     </div>
   );
