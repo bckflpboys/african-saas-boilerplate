@@ -13,35 +13,43 @@ export default function BlogPage() {
   const [filteredPosts, setFilteredPosts] = useState<BlogPost[]>(
     sampleBlogPosts.filter(post => !post.isBanner)
   );
+  const [displayCount, setDisplayCount] = useState(6);
   const [activeCategory, setActiveCategory] = useState('All');
   const categories = ['All', 'Development', 'Payments', 'Performance', 'Security'];
 
   const handleSearch = (searchTerm: string) => {
     if (!searchTerm.trim()) {
       setFilteredPosts(sampleBlogPosts.filter(post => !post.isBanner));
+      setDisplayCount(6);
       return;
     }
 
-    const searchResults = sampleBlogPosts
-      .filter(post => !post.isBanner)
-      .filter(post =>
+    const filtered = sampleBlogPosts.filter(post =>
+      !post.isBanner && (
         post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         post.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
         post.category.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    setFilteredPosts(searchResults);
+      )
+    );
+    setFilteredPosts(filtered);
+    setDisplayCount(6);
   };
 
   const handleCategoryFilter = (category: string) => {
     setActiveCategory(category);
+    setDisplayCount(6);
     if (category === 'All') {
       setFilteredPosts(sampleBlogPosts.filter(post => !post.isBanner));
-      return;
+    } else {
+      const filtered = sampleBlogPosts.filter(post => 
+        !post.isBanner && post.category === category
+      );
+      setFilteredPosts(filtered);
     }
-    const categoryPosts = sampleBlogPosts
-      .filter(post => !post.isBanner)
-      .filter(post => post.category === category);
-    setFilteredPosts(categoryPosts);
+  };
+
+  const handleLoadMore = () => {
+    setDisplayCount(prev => prev + 6);
   };
 
   // Separate featured posts
@@ -56,24 +64,13 @@ export default function BlogPage() {
       <BlogBanner posts={sampleBlogPosts} />
 
       {/* Search and Categories Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
+      <section className="py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <h1 className="text-4xl sm:text-5xl font-bold text-white mb-6">
-              Our Latest{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-500 to-pink-500">
-                Insights
-              </span>
-            </h1>
-            <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-8">
-              Discover the latest trends, tutorials, and insights about African SaaS development,
-              mobile money integration, and web optimization strategies.
-            </p>
-
             {/* Search Bar */}
             <SearchBar
               onSearch={handleSearch}
@@ -87,7 +84,7 @@ export default function BlogPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.5 }}
-            className="flex flex-wrap justify-center gap-3 mt-10"
+            className="flex flex-wrap justify-center gap-3 mt-6"
           >
             {categories.map((category) => (
               <button
@@ -124,7 +121,7 @@ export default function BlogPage() {
                 <div className="mb-16">
                   <h2 className="text-2xl font-bold text-white mb-8">Featured Articles</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {featuredPosts.map((post, index) => (
+                    {featuredPosts.slice(0, displayCount).map((post, index) => (
                       <BlogCard key={`featured-${post.id}`} post={post} index={index} />
                     ))}
                   </div>
@@ -136,7 +133,7 @@ export default function BlogPage() {
                 <div>
                   <h2 className="text-2xl font-bold text-white mb-8">Latest Articles</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {regularPosts.map((post, index) => (
+                    {regularPosts.slice(0, displayCount).map((post, index) => (
                       <BlogCard key={`regular-${post.id}`} post={post} index={index} />
                     ))}
                   </div>
@@ -146,14 +143,17 @@ export default function BlogPage() {
           )}
 
           {/* Load More Button */}
-          {regularPosts.length >= 6 && (
+          {regularPosts.length > displayCount && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.5 }}
               className="text-center mt-12"
             >
-              <button className="px-8 py-3 bg-gray-800 hover:bg-gray-700 text-white rounded-full font-medium transition-colors">
+              <button 
+                onClick={handleLoadMore}
+                className="px-8 py-3 bg-gray-800 hover:bg-gray-700 text-white rounded-full font-medium transition-colors"
+              >
                 Load More Articles
               </button>
             </motion.div>

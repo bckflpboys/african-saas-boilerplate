@@ -24,6 +24,32 @@ This boilerplate comes pre-configured with:
   - Full TypeScript support for type safety
   - Modern development workflow with hot reloading
 
+## 🎯 Features
+
+### Blog System
+- Dynamic blog banner with featured posts rotation
+- Category-based filtering system
+- Search functionality for articles
+- Pagination with "Load More" functionality (6 articles per load)
+- Responsive grid layout for articles
+- Featured and regular article sections
+- Mobile-friendly design
+
+### Authentication
+- Secure user authentication with NextAuth.js
+- Social login options
+- Protected routes and API endpoints
+
+### Payment Integration
+- Seamless payment processing with Paystack
+- Multiple payment methods support
+- Secure transaction handling
+
+### Media Management
+- Image optimization and delivery via Cloudinary
+- Responsive image loading
+- Automatic format optimization
+
 ## 🛠️ Getting Started
 
 First, run the development server:

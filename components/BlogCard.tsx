@@ -32,9 +32,9 @@ export default function BlogCard({ post, index }: BlogCardProps) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1 }}
-      className="group relative bg-gray-800 rounded-2xl overflow-hidden hover:shadow-xl transition-shadow duration-300"
+      className="group relative bg-gray-800 rounded-2xl overflow-hidden hover:shadow-xl transition-shadow duration-300 h-full"
     >
-      <Link href={`/blog/${post.slug}`} className="block">
+      <Link href={`/blog/${post.slug}`} className="block h-full flex flex-col">
         <div className="relative h-48 sm:h-56 overflow-hidden">
           <Image
             src={post.imageUrl}
@@ -49,7 +49,7 @@ export default function BlogCard({ post, index }: BlogCardProps) {
           </div>
         </div>
 
-        <div className="p-6 relative bg-gray-800">
+        <div className="p-6 relative bg-gray-800 flex-grow flex flex-col">
           <div className="flex items-center gap-4 mb-4">
             <div className="relative w-8 h-8 rounded-full overflow-hidden">
               <Image
@@ -65,14 +65,14 @@ export default function BlogCard({ post, index }: BlogCardProps) {
             </div>
           </div>
 
-          <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-primary transition-colors">
+          <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-primary transition-colors line-clamp-2">
             {post.title}
           </h3>
-          <p className="text-gray-400 line-clamp-2">
+          <p className="text-gray-400 line-clamp-2 mb-4">
             {post.excerpt}
           </p>
 
-          <div className="mt-4 flex items-center text-primary">
+          <div className="mt-auto flex items-center text-primary">
             <span className="text-sm font-medium">Read More</span>
             <svg
               className="w-4 h-4 ml-1 transform transition-transform group-hover:translate-x-1"

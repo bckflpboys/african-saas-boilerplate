@@ -87,7 +87,7 @@ export default function PricingSection() {
             <motion.div
               key={plan.name}
               whileHover={{ scale: 1.02 }}
-              className={`rounded-2xl p-8 ${
+              className={`rounded-2xl p-8 flex flex-col h-full ${
                 plan.highlighted
                   ? 'bg-gradient-to-b from-primary/10 to-black-bg border-2 border-primary'
                   : 'bg-gray-800 border border-gray-700'
@@ -101,7 +101,7 @@ export default function PricingSection() {
                 </span>
                 <span className="text-gray-400">/{isYearly ? 'year' : 'month'}</span>
               </div>
-              <ul className="space-y-4 mb-8">
+              <ul className="space-y-4 mb-8 flex-grow">
                 {plan.features.map((feature) => (
                   <li key={feature} className="flex items-center text-gray-300">
                     <svg
@@ -121,7 +121,7 @@ export default function PricingSection() {
               </ul>
               <Link
                 href={plan.name === 'Enterprise' ? '/contact' : '/signup'}
-                className={`block w-full py-3 px-6 text-center rounded-full font-medium transition-colors ${
+                className={`block w-full py-3 px-6 text-center rounded-full font-medium transition-colors mt-auto ${
                   plan.highlighted
                     ? 'bg-primary hover:bg-primary/90 text-white'
                     : 'bg-gray-700 hover:bg-gray-600 text-white'

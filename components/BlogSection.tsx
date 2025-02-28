@@ -224,43 +224,42 @@ export default function BlogSection({
   posts = sampleBlogPosts,
   showViewAll = true 
 }: BlogSectionProps) {
+  // Sort posts to show featured ones first
+  const sortedPosts = [...posts].sort((a, b) => {
+    if (a.isFeatured && !b.isFeatured) return -1;
+    if (!a.isFeatured && b.isFeatured) return 1;
+    return 0;
+  });
+
+  // Take only the first 6 posts
+  const displayPosts = sortedPosts.slice(0, 6);
+
   return (
-    <section className="py-20">
+    <section className="py-20 bg-black-bg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <motion.h2 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-3xl sm:text-4xl font-bold text-primary mb-4"
-          >
-            {title}
-          </motion.h2>
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-xl text-gray-400"
-          >
-            {description}
-          </motion.p>
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-white mb-4">{title}</h2>
+          <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-12">{description}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {posts.map((post, index) => (
-            <BlogCard key={post.id} post={post} index={index} />
+          {displayPosts.map((post, index) => (
+            <motion.div
+              key={post.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+            >
+              <BlogCard post={post} index={index} />
+            </motion.div>
           ))}
         </div>
 
         {showViewAll && (
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="text-center mt-12"
-          >
+          <div className="text-center mt-12">
             <Link
               href="/blog"
-              className="inline-flex items-center gap-2 text-primary hover:text-primary/90 font-medium"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-full font-medium hover:bg-primary/90 transition-colors"
             >
               View All Articles
               <svg
@@ -273,11 +272,11 @@ export default function BlogSection({
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth="2"
-                  d="M17 8l4 4m0 0l-4 4m4-4H3"
+                  d="M9 5l7 7-7 7"
                 />
               </svg>
             </Link>
-          </motion.div>
+          </div>
         )}
       </div>
     </section>
