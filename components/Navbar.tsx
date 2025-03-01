@@ -3,9 +3,9 @@
 import { Fragment, useState } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Menu, Transition } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
-import Image from 'next/image';
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
@@ -18,33 +18,34 @@ export default function Navbar() {
   return (
     <nav className="bg-black-bg">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 justify-between">
-          <div className="flex">
-            <Link href="/" className="flex flex-shrink-0 items-center">
-              <span className="text-2xl font-bold text-primary">AfriSaaS</span>
+        <div className="flex h-16 justify-between items-center">
+          {/* Logo */}
+          <Link href="/" className="flex flex-shrink-0 items-center">
+            <span className="text-2xl font-bold text-primary">AfriSaaS</span>
+          </Link>
+
+          {/* Center Navigation Items */}
+          <div className="hidden sm:flex sm:space-x-8 flex-1 justify-center">
+            <Link
+              href="/features"
+              className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-300 hover:text-primary"
+            >
+              Features
             </Link>
-            <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-              <Link
-                href="/features"
-                className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-300 hover:text-primary"
-              >
-                Features
-              </Link>
-              <Link
-                href="/pricing"
-                className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-300 hover:text-primary"
-              >
-                Pricing
-              </Link>
-              <Link
-                href="/docs"
-                className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-300 hover:text-primary"
-              >
-                Documentation
-              </Link>
-            </div>
+            <Link
+              href="/pricing"
+              className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-300 hover:text-primary"
+            >
+              Pricing
+            </Link>
+            <Link
+              href="/docs"
+              className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-300 hover:text-primary"
+            >
+              Documentation
+            </Link>
           </div>
-          
+
           {/* Mobile menu button */}
           <div className="flex items-center sm:hidden">
             <button
