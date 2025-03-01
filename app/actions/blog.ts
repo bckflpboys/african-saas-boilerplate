@@ -1,13 +1,6 @@
 'use server';
 
-import { v2 as cloudinary } from 'cloudinary';
-
-// Configure Cloudinary
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+import cloudinary from '@/lib/cloudinary';
 
 interface BlogPostData {
   title: string;
@@ -20,28 +13,41 @@ interface BlogPostData {
   author: string;
 }
 
-async function uploadToCloudinary(file: string) {
+export async function uploadToCloudinary(file: string) {
   try {
+    // Generate a unique ID for this upload
+    const uploadId = Date.now().toString();
+    
     // Upload the file to Cloudinary
     const result = await cloudinary.uploader.upload(file, {
       resource_type: "auto", // Automatically detect if it's image, video, or raw
+      folder: `blog-uploads/${uploadId}`, // Organize uploads in folders
+      use_filename: true, // Use the original filename
+      unique_filename: true, // Ensure filename is unique
     });
+
+    if (!result || !result.secure_url) {
+      throw new Error('Failed to get upload URL from Cloudinary');
+    }
 
     return result.secure_url;
   } catch (error) {
     console.error('Error uploading to Cloudinary:', error);
-    throw new Error('Failed to upload media');
+    throw error; // Throw the actual error for better debugging
   }
 }
 
 export async function createBlogPost(data: BlogPostData) {
   try {
+    // Generate a unique ID for this blog post
+    const blogId = Date.now().toString();
+    
     // Extract all media URLs from the content
-    const mediaRegex = /(data:image\/[^;]+;base64[^"]+)|data:video\/[^;]+;base64[^"]+|data:audio\/[^;]+;base64[^"]+/g;
+    const mediaRegex = /data:(image|video|audio)\/[^;]+;base64[^"]+/g;
     let content = data.content;
     const mediaMatches = content.match(mediaRegex) || [];
 
-    // Upload each media file to Cloudinary
+    // Upload each media file to Cloudinary in its respective folder
     for (const mediaUrl of mediaMatches) {
       const cloudinaryUrl = await uploadToCloudinary(mediaUrl);
       content = content.replace(mediaUrl, cloudinaryUrl);
@@ -64,6 +70,7 @@ export async function createBlogPost(data: BlogPostData) {
         ...data,
         content,
         coverImage: coverImageUrl,
+        blogId, // Store the blogId for future reference
       }),
     });
 

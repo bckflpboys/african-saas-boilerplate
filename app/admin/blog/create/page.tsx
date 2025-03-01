@@ -1,24 +1,23 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { useSession } from 'next-auth/react';
+import { useState, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+import Link from 'next/link';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
 import Youtube from '@tiptap/extension-youtube';
-import { 
-  ArrowLeftIcon, 
-  ClockIcon,
+import {
   PhotoIcon,
   VideoCameraIcon,
   MusicalNoteIcon,
-  LinkIcon
+  ArrowLeftIcon,
+  ClockIcon,
 } from '@heroicons/react/24/outline';
+import { createBlogPost, uploadToCloudinary } from '@/app/actions/blog';
+import { debounce } from 'lodash';
 import readingTime from 'reading-time';
-import Link from 'next/link';
-import { createBlogPost } from '@/app/actions/blog';
-import debounce from 'lodash.debounce';
 
 interface BlogPostForm {
   title: string;
@@ -240,12 +239,19 @@ const MenuBar = ({ editor }: any) => {
     setActiveModal(null);
   };
 
+  const handleEditorButtonClick = (callback: () => boolean) => {
+    return (e: React.MouseEvent) => {
+      e.preventDefault();
+      callback();
+    };
+  };
+
   return (
     <>
       <div className="flex flex-wrap gap-2 p-2 bg-gray-800 border-b border-gray-700 rounded-t-md">
         <div className="flex items-center gap-2 border-r border-gray-700 pr-2 mr-2">
           <button
-            onClick={() => editor.chain().focus().toggleBold().run()}
+            onClick={handleEditorButtonClick(() => editor.chain().focus().toggleBold().run())}
             disabled={!editor.can().chain().focus().toggleBold().run()}
             className={`px-2 py-1 rounded ${
               editor.isActive('bold') ? 'bg-primary/20 text-primary' : 'text-gray-300 hover:bg-gray-700'
@@ -254,7 +260,7 @@ const MenuBar = ({ editor }: any) => {
             bold
           </button>
           <button
-            onClick={() => editor.chain().focus().toggleItalic().run()}
+            onClick={handleEditorButtonClick(() => editor.chain().focus().toggleItalic().run())}
             disabled={!editor.can().chain().focus().toggleItalic().run()}
             className={`px-2 py-1 rounded ${
               editor.isActive('italic') ? 'bg-primary/20 text-primary' : 'text-gray-300 hover:bg-gray-700'
@@ -263,7 +269,7 @@ const MenuBar = ({ editor }: any) => {
             italic
           </button>
           <button
-            onClick={() => editor.chain().focus().toggleStrike().run()}
+            onClick={handleEditorButtonClick(() => editor.chain().focus().toggleStrike().run())}
             disabled={!editor.can().chain().focus().toggleStrike().run()}
             className={`px-2 py-1 rounded ${
               editor.isActive('strike') ? 'bg-primary/20 text-primary' : 'text-gray-300 hover:bg-gray-700'
@@ -272,7 +278,7 @@ const MenuBar = ({ editor }: any) => {
             strike
           </button>
           <button
-            onClick={() => editor.chain().focus().toggleCode().run()}
+            onClick={handleEditorButtonClick(() => editor.chain().focus().toggleCode().run())}
             disabled={!editor.can().chain().focus().toggleCode().run()}
             className={`px-2 py-1 rounded ${
               editor.isActive('code') ? 'bg-primary/20 text-primary' : 'text-gray-300 hover:bg-gray-700'
@@ -281,7 +287,7 @@ const MenuBar = ({ editor }: any) => {
             code
           </button>
           <button
-            onClick={() => editor.chain().focus().setParagraph().run()}
+            onClick={handleEditorButtonClick(() => editor.chain().focus().setParagraph().run())}
             className={`px-2 py-1 rounded ${
               editor.isActive('paragraph') ? 'bg-primary/20 text-primary' : 'text-gray-300 hover:bg-gray-700'
             }`}
@@ -289,7 +295,7 @@ const MenuBar = ({ editor }: any) => {
             paragraph
           </button>
           <button
-            onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+            onClick={handleEditorButtonClick(() => editor.chain().focus().toggleHeading({ level: 1 }).run())}
             className={`px-2 py-1 rounded ${
               editor.isActive('heading', { level: 1 }) ? 'bg-primary/20 text-primary' : 'text-gray-300 hover:bg-gray-700'
             }`}
@@ -297,7 +303,7 @@ const MenuBar = ({ editor }: any) => {
             h1
           </button>
           <button
-            onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+            onClick={handleEditorButtonClick(() => editor.chain().focus().toggleHeading({ level: 2 }).run())}
             className={`px-2 py-1 rounded ${
               editor.isActive('heading', { level: 2 }) ? 'bg-primary/20 text-primary' : 'text-gray-300 hover:bg-gray-700'
             }`}
@@ -305,7 +311,7 @@ const MenuBar = ({ editor }: any) => {
             h2
           </button>
           <button
-            onClick={() => editor.chain().focus().toggleBulletList().run()}
+            onClick={handleEditorButtonClick(() => editor.chain().focus().toggleBulletList().run())}
             className={`px-2 py-1 rounded ${
               editor.isActive('bulletList') ? 'bg-primary/20 text-primary' : 'text-gray-300 hover:bg-gray-700'
             }`}
@@ -313,7 +319,7 @@ const MenuBar = ({ editor }: any) => {
             bullet list
           </button>
           <button
-            onClick={() => editor.chain().focus().toggleOrderedList().run()}
+            onClick={handleEditorButtonClick(() => editor.chain().focus().toggleOrderedList().run())}
             className={`px-2 py-1 rounded ${
               editor.isActive('orderedList') ? 'bg-primary/20 text-primary' : 'text-gray-300 hover:bg-gray-700'
             }`}
@@ -321,7 +327,7 @@ const MenuBar = ({ editor }: any) => {
             ordered list
           </button>
           <button
-            onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+            onClick={handleEditorButtonClick(() => editor.chain().focus().toggleCodeBlock().run())}
             className={`px-2 py-1 rounded ${
               editor.isActive('codeBlock') ? 'bg-primary/20 text-primary' : 'text-gray-300 hover:bg-gray-700'
             }`}
@@ -329,7 +335,7 @@ const MenuBar = ({ editor }: any) => {
             code block
           </button>
           <button
-            onClick={() => editor.chain().focus().toggleBlockquote().run()}
+            onClick={handleEditorButtonClick(() => editor.chain().focus().toggleBlockquote().run())}
             className={`px-2 py-1 rounded ${
               editor.isActive('blockquote') ? 'bg-primary/20 text-primary' : 'text-gray-300 hover:bg-gray-700'
             }`}
@@ -340,6 +346,7 @@ const MenuBar = ({ editor }: any) => {
 
         <div className="flex items-center gap-2 border-r border-gray-700 pr-2 mr-2">
           <button
+            type="button"
             onClick={() => setActiveModal('image')}
             className="flex items-center gap-1 px-2 py-1 rounded text-gray-300 hover:bg-gray-700"
             title="Add Image"
@@ -349,6 +356,7 @@ const MenuBar = ({ editor }: any) => {
           </button>
 
           <button
+            type="button"
             onClick={() => setActiveModal('video')}
             className="flex items-center gap-1 px-2 py-1 rounded text-gray-300 hover:bg-gray-700"
             title="Add Video"
@@ -358,6 +366,7 @@ const MenuBar = ({ editor }: any) => {
           </button>
 
           <button
+            type="button"
             onClick={() => setActiveModal('audio')}
             className="flex items-center gap-1 px-2 py-1 rounded text-gray-300 hover:bg-gray-700"
             title="Add Audio"
@@ -456,11 +465,78 @@ export default function CreateBlogPost() {
     setError('');
 
     try {
-      const result = await createBlogPost(formData);
-      // toast.success('Blog post created successfully!');
+      // Extract all media URLs from the content
+      const mediaRegex = /src="(blob:[^"]+)"/g;
+      let content = editor?.getHTML() || '';
+      const mediaMatches = [...content.matchAll(mediaRegex)];
+
+      // Upload each blob URL to Cloudinary
+      for (const match of mediaMatches) {
+        const blobUrl = match[1];
+        try {
+          // Fetch the blob
+          const response = await fetch(blobUrl);
+          const blob = await response.blob();
+          
+          // Convert blob to base64
+          const base64 = await new Promise<string>((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result as string);
+            reader.readAsDataURL(blob);
+          });
+
+          // Upload to Cloudinary
+          try {
+            const cloudinaryUrl = await uploadToCloudinary(base64);
+            // Replace blob URL with Cloudinary URL
+            content = content.replace(blobUrl, cloudinaryUrl);
+          } catch (uploadError: any) {
+            console.error('Failed to upload media:', uploadError);
+            setError(uploadError.message || 'Failed to upload media');
+            return;
+          }
+        } catch (error) {
+          console.error('Error processing media:', error);
+          setError('Failed to process media file');
+          return;
+        }
+      }
+
+      // Upload cover image if it's a blob URL
+      let coverImage = formData.coverImage;
+      if (coverImage.startsWith('blob:')) {
+        try {
+          const response = await fetch(coverImage);
+          const blob = await response.blob();
+          const base64 = await new Promise<string>((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result as string);
+            reader.readAsDataURL(blob);
+          });
+          try {
+            coverImage = await uploadToCloudinary(base64);
+          } catch (uploadError: any) {
+            console.error('Failed to upload cover image:', uploadError);
+            setError(uploadError.message || 'Failed to upload cover image');
+            return;
+          }
+        } catch (error) {
+          console.error('Error processing cover image:', error);
+          setError('Failed to process cover image');
+          return;
+        }
+      }
+
+      // Create blog post with Cloudinary URLs
+      const result = await createBlogPost({
+        ...formData,
+        content,
+        coverImage,
+      });
+
+      // Redirect to the blog list page
       router.push('/admin/blog');
     } catch (error: any) {
-      console.error('Error creating blog post:', error);
       setError(error.message || 'Failed to create blog post');
     } finally {
       setLoading(false);
@@ -511,6 +587,7 @@ export default function CreateBlogPost() {
       debouncedContentUpdate(content);
     },
     editorProps: {
+      handleKeyPress: () => false, // Allow default key behavior in editor
       attributes: {
         class: [
           'prose prose-sm prose-invert max-w-none min-h-[200px] p-4 focus:outline-none',
@@ -577,8 +654,8 @@ export default function CreateBlogPost() {
 
       {error && (
         <div className="mb-6 p-4 bg-red-500/10 border border-red-500 rounded-lg">
-          <p className="text-sm text-red-500">{error}</p>
-        </div>
+        <p className="text-sm text-red-500">{error}</p>
+      </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
