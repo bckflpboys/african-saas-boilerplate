@@ -13,7 +13,8 @@ import {
   Cog6ToothIcon,
   DocumentTextIcon,
   ShieldCheckIcon,
-  BellIcon
+  BellIcon,
+  PencilSquareIcon
 } from '@heroicons/react/24/outline';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
@@ -23,6 +24,7 @@ const navigation = [
   { name: 'Users', href: '/admin/users', icon: UsersIcon },
   { name: 'Subscriptions', href: '/admin/subscriptions', icon: CreditCardIcon },
   { name: 'Analytics', href: '/admin/analytics', icon: ChartBarIcon },
+  { name: 'Blog', href: '/admin/blog', icon: PencilSquareIcon },
   { name: 'Documents', href: '/admin/documents', icon: DocumentTextIcon },
   { name: 'Roles', href: '/admin/roles', icon: ShieldCheckIcon },
   { name: 'Notifications', href: '/admin/notifications', icon: BellIcon },

@@ -9,7 +9,11 @@ import { Types } from 'mongoose';
 export async function GET() {
   try {
     const headersList = headers();
-    console.log('Request headers:', Object.fromEntries(headersList.entries()));
+    // Wait for headers before using them
+    const headersObj = await new Promise(resolve => {
+      resolve(Object.fromEntries(headersList.entries()));
+    });
+    console.log('Request headers:', headersObj);
 
     // Check if user is authenticated and is admin
     const session = await getServerSession(authOptions);
