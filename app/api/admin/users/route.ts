@@ -3,7 +3,8 @@ import { getServerSession } from 'next-auth';
 import { headers } from 'next/headers';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import connectDB from '@/lib/mongodb';
-import User from '@/models/User';
+import User, { IUserDocument } from '@/models/User';
+import { Types } from 'mongoose';
 
 export async function GET() {
   try {
@@ -28,7 +29,7 @@ export async function GET() {
     await connectDB();
 
     // Fetch all users
-    const users = await User.find({}).select('-password').lean();
+    const users = await User.find().select('-password').lean<(IUserDocument & { _id: Types.ObjectId })[]>();
     console.log('Found users:', users.length);
 
     // Transform _id to id
