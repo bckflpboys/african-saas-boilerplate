@@ -66,17 +66,6 @@ export default function BlogBanner({ posts }: BlogBannerProps) {
                 className="max-w-2xl"
               >
                 <div className="flex items-center gap-4 mb-4">
-                  <div className="flex items-center gap-2">
-                    <Image
-                      src={`https://ui-avatars.com/api/?name=${encodeURIComponent(bannerPosts[currentIndex].author)}&background=10B981&color=fff`}
-                      alt={bannerPosts[currentIndex].author}
-                      width={32}
-                      height={32}
-                      className="rounded-full"
-                    />
-                    <span className="text-sm text-gray-300">{bannerPosts[currentIndex].author}</span>
-                  </div>
-                  <span className="text-sm text-gray-400">·</span>
                   <span className="text-sm text-gray-300">{formatDate(bannerPosts[currentIndex].createdAt)}</span>
                   <span className="text-sm text-gray-400">·</span>
                   <span className="text-sm text-gray-300">{bannerPosts[currentIndex].readingTime}</span>
