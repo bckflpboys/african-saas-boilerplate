@@ -136,7 +136,16 @@ export default function BlogPost() {
             <p className="text-xl text-gray-300 mb-8">
               {post.excerpt}
             </p>
-            <div dangerouslySetInnerHTML={{ __html: post.content }} />
+            <div 
+              dangerouslySetInnerHTML={{ 
+                __html: post.content.replace(
+                  /<h1>/g, '<h1 style="font-size: 2.25rem; font-weight: 700; color: white; margin-bottom: 1.5rem; line-height: 1.2;">'
+                ).replace(
+                  /<h2>/g, '<h2 style="font-size: 1.875rem; font-weight: 600; color: white; margin-bottom: 1rem; line-height: 1.3;">'
+                )
+              }} 
+              className="prose prose-lg prose-invert max-w-none" 
+            />
           </motion.div>
 
           {/* Share Section */}

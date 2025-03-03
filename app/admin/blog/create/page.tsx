@@ -243,8 +243,9 @@ const MenuBar = ({ editor }: any) => {
   };
 
   const handleEditorButtonClick = (callback: () => boolean) => {
-    return (e: React.MouseEvent) => {
+    return (e: React.MouseEvent<HTMLButtonElement>) => {
       e.preventDefault();
+      e.currentTarget.type = 'button'; // Prevent form submission
       callback();
     };
   };
@@ -253,6 +254,24 @@ const MenuBar = ({ editor }: any) => {
     <>
       <div className="flex flex-wrap gap-2 p-2 bg-gray-800 border-b border-gray-700 rounded-t-md">
         <div className="flex items-center gap-2 border-r border-gray-700 pr-2 mr-2">
+          <button
+            type="button"
+            onClick={handleEditorButtonClick(() => editor.chain().focus().toggleHeading({ level: 1 }).run())}
+            className={`px-2 py-1 rounded ${
+              editor.isActive('heading', { level: 1 }) ? 'bg-primary/20 text-primary' : 'text-gray-300 hover:bg-gray-700'
+            }`}
+          >
+            h1
+          </button>
+          <button
+            type="button"
+            onClick={handleEditorButtonClick(() => editor.chain().focus().toggleHeading({ level: 2 }).run())}
+            className={`px-2 py-1 rounded ${
+              editor.isActive('heading', { level: 2 }) ? 'bg-primary/20 text-primary' : 'text-gray-300 hover:bg-gray-700'
+            }`}
+          >
+            h2
+          </button>
           <button
             onClick={handleEditorButtonClick(() => editor.chain().focus().toggleBold().run())}
             disabled={!editor.can().chain().focus().toggleBold().run()}
@@ -296,22 +315,6 @@ const MenuBar = ({ editor }: any) => {
             }`}
           >
             paragraph
-          </button>
-          <button
-            onClick={handleEditorButtonClick(() => editor.chain().focus().toggleHeading({ level: 1 }).run())}
-            className={`px-2 py-1 rounded ${
-              editor.isActive('heading', { level: 1 }) ? 'bg-primary/20 text-primary' : 'text-gray-300 hover:bg-gray-700'
-            }`}
-          >
-            h1
-          </button>
-          <button
-            onClick={handleEditorButtonClick(() => editor.chain().focus().toggleHeading({ level: 2 }).run())}
-            className={`px-2 py-1 rounded ${
-              editor.isActive('heading', { level: 2 }) ? 'bg-primary/20 text-primary' : 'text-gray-300 hover:bg-gray-700'
-            }`}
-          >
-            h2
           </button>
           <button
             onClick={handleEditorButtonClick(() => editor.chain().focus().toggleBulletList().run())}
@@ -571,18 +574,18 @@ export default function CreateBlogPost() {
     ],
     content: formData.content,
     onUpdate: ({ editor }) => {
-      const content = editor.getHTML();
+      const content = editor.getHTML()
+        .replace(/<h1[^>]*>/g, '<h1>')  // Clean any extra attributes from h1
+        .replace(/<h2[^>]*>/g, '<h2>'); // Clean any extra attributes from h2
       debouncedContentUpdate(content);
     },
     editorProps: {
-      handleKeyPress: () => false, // Allow default key behavior in editor
       attributes: {
         class: [
           'prose prose-sm prose-invert max-w-none min-h-[200px] p-4 focus:outline-none',
-          'prose-headings:font-bold',
-          'prose-h1:text-3xl prose-h1:mb-4',
-          'prose-h2:text-2xl prose-h2:mb-3',
-          'prose-p:mb-2',
+          'prose-h1:text-4xl prose-h1:font-bold prose-h1:text-white prose-h1:mb-6',
+          'prose-h2:text-3xl prose-h2:font-semibold prose-h2:text-white prose-h2:mb-4',
+          'prose-p:mb-2 prose-p:text-gray-300',
           'prose-ul:list-disc prose-ul:pl-4',
           'prose-ol:list-decimal prose-ol:pl-4',
           'prose-li:mb-1',
@@ -646,7 +649,7 @@ export default function CreateBlogPost() {
       </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-8">
         <div>
           <label htmlFor="title" className="block text-sm font-medium text-gray-300">
             Title
