@@ -2,10 +2,11 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Blog from '@/models/Blog';
 
-export async function GET(request: Request, { params }: { params: { slug: string } }) {
+export async function GET(request: Request) {
   try {
     await connectDB();
-    const post = await Blog.findById(params.slug);
+    const id = request.url.split('/').pop();
+    const post = await Blog.findById(id);
     
     if (!post) {
       return NextResponse.json(
@@ -24,14 +25,15 @@ export async function GET(request: Request, { params }: { params: { slug: string
   }
 }
 
-export async function PUT(request: Request, { params }: { params: { slug: string } }) {
+export async function PUT(request: Request) {
   try {
     await connectDB();
+    const id = request.url.split('/').pop();
     const updateData = await request.json();
     
     // Update the blog post
     const updatedPost = await Blog.findByIdAndUpdate(
-      params.slug,
+      id,
       { 
         ...updateData,
         updatedAt: new Date()
@@ -59,10 +61,11 @@ export async function PUT(request: Request, { params }: { params: { slug: string
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: { slug: string } }) {
+export async function DELETE(request: Request) {
   try {
     await connectDB();
-    const deletedPost = await Blog.findByIdAndDelete(params.slug);
+    const id = request.url.split('/').pop();
+    const deletedPost = await Blog.findByIdAndDelete(id);
 
     if (!deletedPost) {
       return NextResponse.json(

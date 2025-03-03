@@ -142,9 +142,11 @@ export default function BlogPost() {
                   /<h1>/g, '<h1 style="font-size: 2.25rem; font-weight: 700; color: white; margin-bottom: 1.5rem; line-height: 1.2;">'
                 ).replace(
                   /<h2>/g, '<h2 style="font-size: 1.875rem; font-weight: 600; color: white; margin-bottom: 1rem; line-height: 1.3;">'
+                ).replace(
+                  /<p><\/p>/g, '<p style="margin-top: 2rem;"></p>'
                 )
               }} 
-              className="prose prose-lg prose-invert max-w-none" 
+              className="prose prose-lg prose-invert max-w-none [&>p]:mb-4" 
             />
           </motion.div>
 

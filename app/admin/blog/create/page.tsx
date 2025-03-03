@@ -585,7 +585,8 @@ export default function CreateBlogPost() {
           'prose prose-sm prose-invert max-w-none min-h-[200px] p-4 focus:outline-none',
           'prose-h1:text-4xl prose-h1:font-bold prose-h1:text-white prose-h1:mb-6',
           'prose-h2:text-3xl prose-h2:font-semibold prose-h2:text-white prose-h2:mb-4',
-          'prose-p:mb-2 prose-p:text-gray-300',
+          'prose-p:mb-4 prose-p:text-gray-300',
+          'prose-p:empty:mt-8', // Add extra margin for empty paragraphs (line breaks)
           'prose-ul:list-disc prose-ul:pl-4',
           'prose-ol:list-decimal prose-ol:pl-4',
           'prose-li:mb-1',
