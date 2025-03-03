@@ -49,6 +49,7 @@ export default function BlogCard({ post, index }: BlogCardProps) {
             src={post.coverImage || defaultCoverImage}
             alt={post.title}
             fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             className="object-cover transition-all duration-500 group-hover:scale-110"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

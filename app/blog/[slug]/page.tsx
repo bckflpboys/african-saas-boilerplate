@@ -98,8 +98,9 @@ export default function BlogPost() {
             src={post.coverImage}
             alt={post.title}
             fill
-            className="object-cover"
+            sizes="100vw"
             priority
+            className="object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/50 to-black" />
           <div className="absolute inset-0 flex items-end pb-12">
