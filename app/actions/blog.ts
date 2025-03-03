@@ -24,7 +24,24 @@ interface BlogPostForm {
   author: string;
 }
 
+interface CloudinaryUploadOptions {
+  resource_type: "video" | "auto";
+  folder: string;
+  use_filename: boolean;
+  unique_filename: boolean;
+  timeout: number;
+  chunk_size: number;
+}
+
 export interface CreateBlogPostParams extends BlogPostForm {
+  blogId: string;
+  content: string;
+  coverImage: string;
+  isBanner: boolean;
+  isFeatured: boolean;
+}
+
+export interface UpdateBlogPostParams extends BlogPostForm {
   blogId: string;
   content: string;
   coverImage: string;
@@ -37,7 +54,7 @@ export async function uploadToCloudinary(file: string, blogId: string, type: 'co
     // Determine if the file is a video based on the data URL
     const isVideo = file.startsWith('data:video');
 
-    const uploadOptions = {
+    const uploadOptions: CloudinaryUploadOptions = {
       resource_type: isVideo ? "video" : "auto",
       folder: `blogs/blog-${blogId}/${type}`,
       use_filename: true,
@@ -108,6 +125,65 @@ export async function createBlogPost(params: CreateBlogPostParams) {
     return await response.json();
   } catch (error) {
     console.error('Error creating blog post:', error);
+    throw error;
+  }
+}
+
+export async function updateBlogPost(id: string, params: UpdateBlogPostParams) {
+  try {
+    let content = params.content;
+    
+    // Extract all media URLs from the content
+    const mediaRegex = /data:(image|video|audio)\/[^;]+;base64[^"]+/g;
+    const mediaMatches = content.match(mediaRegex) || [];
+
+    // Upload each media file to Cloudinary with progress tracking
+    for (const mediaUrl of mediaMatches) {
+      try {
+        const cloudinaryUrl = await uploadToCloudinary(mediaUrl, params.blogId, 'content');
+        content = content.replace(mediaUrl, cloudinaryUrl);
+      } catch (error) {
+        console.error('Error uploading media:', error);
+        throw new Error('Failed to upload media content. The file might be too large or in an unsupported format.');
+      }
+    }
+
+    // Upload cover image if it's a base64 string
+    let coverImageUrl = params.coverImage;
+    if (params.coverImage.startsWith('data:')) {
+      try {
+        coverImageUrl = await uploadToCloudinary(params.coverImage, params.blogId, 'cover');
+      } catch (error) {
+        console.error('Error uploading cover image:', error);
+        throw new Error('Failed to upload cover image. The file might be too large or in an unsupported format.');
+      }
+    }
+
+    // Update the blog post
+    const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+    const response = await fetch(`${baseUrl}/api/blog/posts/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        ...params,
+        content,
+        coverImage: coverImageUrl,
+        isBanner: Boolean(params.isBanner),
+        isFeatured: Boolean(params.isFeatured)
+      }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to update blog post');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error updating blog post:', error);
     throw error;
   }
 }

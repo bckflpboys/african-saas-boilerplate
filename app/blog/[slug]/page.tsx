@@ -149,9 +149,15 @@ export default function BlogPost() {
                   /<ol>/g, '<ol style="list-style-type: decimal; padding-left: 1.5rem; margin: 1rem 0;">'
                 ).replace(
                   /<li>/g, '<li style="margin-bottom: 0.5rem; color: #D1D5DB;">'
+                ).replace(
+                  /<img/g, '<img style="display: block; margin: 2rem auto; max-width: 100%; height: auto;"'
+                ).replace(
+                  /<video/g, '<video style="display: block; margin: 2rem auto; max-width: 100%;"'
+                ).replace(
+                  /<audio/g, '<audio style="display: block; margin: 2rem auto; width: 100%; background: #1F2937; padding: 1rem; border-radius: 0.5rem;"'
                 )
               }} 
-              className="prose prose-lg prose-invert max-w-none [&>p]:mb-4 [&>ul]:list-disc [&>ol]:list-decimal" 
+              className="prose prose-lg prose-invert max-w-none prose-img:mx-auto prose-img:block prose-img:my-8 prose-video:my-8 prose-audio:my-8"
             />
           </motion.div>
 
