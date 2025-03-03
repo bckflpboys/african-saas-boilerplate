@@ -34,13 +34,19 @@ export interface CreateBlogPostParams extends BlogPostForm {
 
 export async function uploadToCloudinary(file: string, blogId: string, type: 'cover' | 'content') {
   try {
-    const result = await cloudinary.uploader.upload(file, {
-      resource_type: "auto",
+    // Determine if the file is a video based on the data URL
+    const isVideo = file.startsWith('data:video');
+
+    const uploadOptions = {
+      resource_type: isVideo ? "video" : "auto",
       folder: `blogs/blog-${blogId}/${type}`,
       use_filename: true,
       unique_filename: true,
-    });
+      timeout: 120000, // 2 minutes timeout for video uploads
+      chunk_size: 6000000, // 6MB chunks for better upload handling
+    };
 
+    const result = await cloudinary.uploader.upload(file, uploadOptions);
     return result.secure_url;
   } catch (error) {
     console.error('Error uploading to Cloudinary:', error);
@@ -56,16 +62,26 @@ export async function createBlogPost(params: CreateBlogPostParams) {
     const mediaRegex = /data:(image|video|audio)\/[^;]+;base64[^"]+/g;
     const mediaMatches = content.match(mediaRegex) || [];
 
-    // Upload each media file to Cloudinary
+    // Upload each media file to Cloudinary with progress tracking
     for (const mediaUrl of mediaMatches) {
-      const cloudinaryUrl = await uploadToCloudinary(mediaUrl, params.blogId, 'content');
-      content = content.replace(mediaUrl, cloudinaryUrl);
+      try {
+        const cloudinaryUrl = await uploadToCloudinary(mediaUrl, params.blogId, 'content');
+        content = content.replace(mediaUrl, cloudinaryUrl);
+      } catch (error) {
+        console.error('Error uploading media:', error);
+        throw new Error('Failed to upload media content. The file might be too large or in an unsupported format.');
+      }
     }
 
     // Upload cover image if it's a base64 string
     let coverImageUrl = params.coverImage;
     if (params.coverImage.startsWith('data:')) {
-      coverImageUrl = await uploadToCloudinary(params.coverImage, params.blogId, 'cover');
+      try {
+        coverImageUrl = await uploadToCloudinary(params.coverImage, params.blogId, 'cover');
+      } catch (error) {
+        console.error('Error uploading cover image:', error);
+        throw new Error('Failed to upload cover image. The file might be too large or in an unsupported format.');
+      }
     }
 
     // Create the blog post

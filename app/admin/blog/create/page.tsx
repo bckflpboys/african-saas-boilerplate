@@ -8,6 +8,8 @@ import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
 import Youtube from '@tiptap/extension-youtube';
+import { Video } from '@/lib/extensions/video';
+import { Audio } from '@/lib/extensions/audio';
 import {
   PhotoIcon,
   VideoCameraIcon,
@@ -140,18 +142,22 @@ const MediaModal = ({ isOpen, onClose, onSubmit, type, title }: MediaModalProps)
           )}
 
           {type === 'video' && url && (
-            <div className="mt-4">
-              <iframe
+            <div className="mt-4 relative rounded-lg overflow-hidden border border-gray-700">
+              <video 
                 src={url}
+                controls
                 className="w-full aspect-video rounded-lg"
-                allowFullScreen
               />
             </div>
           )}
 
           {type === 'audio' && url && (
-            <div className="mt-4">
-              <audio src={url} controls className="w-full" />
+            <div className="mt-4 relative rounded-lg overflow-hidden border border-gray-700 bg-gray-800/50 p-4">
+              <audio 
+                src={url}
+                controls
+                className="w-full"
+              />
             </div>
           )}
 
@@ -204,21 +210,15 @@ const MenuBar = ({ editor }: any) => {
         }).run();
       } else {
         // For direct video files, insert video element
-        editor.chain().focus().insertContent(`
-          <video controls width="100%" height="auto">
-            <source src="${url}" type="video/mp4">
-            Your browser does not support the video tag.
-          </video>
-        `).run();
+        editor.chain().focus().setVideo({
+          src: url,
+        }).run();
       }
     } else if (activeModal === 'audio') {
       // Insert audio with controls
-      editor.chain().focus().insertContent(`
-        <audio controls style="width: 100%; margin: 1em 0;">
-          <source src="${url}" type="audio/mpeg">
-          Your browser does not support the audio element.
-        </audio>
-      `).run();
+      editor.chain().focus().setAudio({
+        src: url,
+      }).run();
     }
   };
 
@@ -548,38 +548,28 @@ export default function CreateBlogPost() {
 
   const editor = useEditor({
     extensions: [
-      StarterKit.configure({
-        heading: {
-          levels: [1, 2]
-        },
-        bulletList: {
-          keepMarks: true,
-          keepAttributes: false,
-          HTMLAttributes: {
-            style: 'list-style-type: disc; padding-left: 1.5rem; margin: 1rem 0;'
-          }
-        },
-        orderedList: {
-          keepMarks: true,
-          keepAttributes: false,
-          HTMLAttributes: {
-            style: 'list-style-type: decimal; padding-left: 1.5rem; margin: 1rem 0;'
-          }
-        },
-        listItem: {
-          HTMLAttributes: {
-            style: 'margin-bottom: 0.5rem; color: #D1D5DB;'
-          }
-        }
-      }),
+      StarterKit,
       Image.configure({
         HTMLAttributes: {
-          class: 'rounded-lg max-w-full h-auto',
+          class: 'rounded-lg max-h-[500px] object-contain',
         },
       }),
       Youtube.configure({
         HTMLAttributes: {
           class: 'w-full aspect-video rounded-lg',
+        },
+      }),
+      Video.configure({
+        HTMLAttributes: {
+          controls: true,
+          class: 'w-full aspect-video rounded-lg',
+        },
+      }),
+      Audio.configure({
+        HTMLAttributes: {
+          controls: true,
+          class: 'w-full',
+          style: 'background: #1F2937; padding: 1rem; border-radius: 0.5rem;',
         },
       }),
     ],
