@@ -174,9 +174,6 @@ export default function BlogSection({
     return 0;
   });
 
-  // Take only the first 6 posts
-  const displayPosts = sortedPosts.slice(0, 6);
-
   return (
     <section className="py-20 bg-black-bg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -186,12 +183,35 @@ export default function BlogSection({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {displayPosts.map((post, index) => (
+          {sortedPosts.slice(0, 3).map((post, index) => (
             <motion.div
               key={post._id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
+              className="block sm:hidden"
+            >
+              <BlogCard post={post} index={index} />
+            </motion.div>
+          ))}
+          {sortedPosts.slice(0, 4).map((post, index) => (
+            <motion.div
+              key={`md-${post._id}`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              className="hidden sm:block md:block lg:hidden"
+            >
+              <BlogCard post={post} index={index} />
+            </motion.div>
+          ))}
+          {sortedPosts.slice(0, 6).map((post, index) => (
+            <motion.div
+              key={`lg-${post._id}`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              className="hidden lg:block"
             >
               <BlogCard post={post} index={index} />
             </motion.div>

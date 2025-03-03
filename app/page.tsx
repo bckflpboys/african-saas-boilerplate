@@ -1,10 +1,14 @@
+'use client';
+
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PricingSection from "@/components/PricingSection";
 import FAQSection from "@/components/FAQSection";
 import HeroSection from "@/components/HeroSection";
-import BlogSection, { sampleBlogPosts } from "@/components/BlogSection";
+import BlogSection from "@/components/BlogSection";
+import { BlogPost } from "@/components/BlogCard";
 
 const homeFAQs = [
   {
@@ -26,6 +30,25 @@ const homeFAQs = [
 ];
 
 export default function Home() {
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  const fetchPosts = async () => {
+    try {
+      const response = await fetch('/api/blog/posts');
+      if (!response.ok) {
+        throw new Error('Failed to fetch posts');
+      }
+      const data = await response.json();
+      setPosts(data);
+    } catch (err: any) {
+      console.error('Error fetching posts:', err);
+    }
+  };
+
   return (
     <div className="bg-black-bg min-h-screen flex flex-col">
       <Navbar />
@@ -86,12 +109,12 @@ export default function Home() {
               <div className="flex items-start gap-4">
                 <div className="bg-nature-100/10 p-3 rounded-lg">
                   <svg className="w-6 h-6 text-nature-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
                 </div>
                 <div>
-                  <h2 className="text-2xl font-semibold text-nature-100 mb-4">Cloud Ready</h2>
-                  <p className="text-gray-400 text-lg">Easy deployment with built-in cloud infrastructure</p>
+                  <h2 className="text-2xl font-semibold text-nature-100 mb-4">Performance</h2>
+                  <p className="text-gray-400 text-lg">Optimized for varying network conditions</p>
                 </div>
               </div>
             </div>
@@ -99,63 +122,18 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Why Choose Section */}
-      <div className="w-full max-w-6xl mx-auto mt-24 mb-16">
-        <h2 className="text-3xl sm:text-4xl font-bold text-center mb-12 text-secondary">Why Choose African SaaS Boilerplate?</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="text-center p-6">
-            <div className="bg-gray-800/50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
-              </svg>
-            </div>
-            <h3 className="text-xl font-semibold mb-3 text-accent">Local Payment Methods</h3>
-            <p className="text-gray-400">Support for Paystack, M-Pesa, and other popular African payment gateways</p>
-          </div>
-
-          <div className="text-center p-6">
-            <div className="bg-gray-800/50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-sunset-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-            </div>
-            <h3 className="text-xl font-semibold mb-3 text-sunset-200">Optimized Performance</h3>
-            <p className="text-gray-400">Built for African internet conditions with offline-first capabilities</p>
-          </div>
-
-          <div className="text-center p-6">
-            <div className="bg-gray-800/50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-nature-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <h3 className="text-xl font-semibold mb-3 text-nature-100">Multi-Language Support</h3>
-            <p className="text-gray-400">Built-in support for major African languages and localization</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Pricing Section */}
-      <div className="py-20 border-t border-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-16">
-          <h2 className="text-4xl font-bold text-primary mb-6">Simple, Transparent Pricing</h2>
-          <p className="text-xl text-gray-400">Choose the perfect plan to start building your SaaS application</p>
-        </div>
-        <PricingSection />
-      </div>
-
       {/* Blog Section */}
       <div className="border-t border-gray-800">
-        <BlogSection posts={sampleBlogPosts} />
+        <BlogSection 
+          posts={posts}
+          title="Latest from Our Blog"
+          description="Stay updated with the latest insights, tutorials, and news about African SaaS development"
+        />
       </div>
 
       {/* FAQ Section */}
       <div className="border-t border-gray-800">
-        <FAQSection
-          title="Common Questions"
-          description="Everything you need to know about the African SaaS Boilerplate"
-          faqs={homeFAQs}
-        />
+        <FAQSection faqs={homeFAQs} />
       </div>
 
       <Footer />

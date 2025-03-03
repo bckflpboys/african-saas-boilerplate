@@ -29,7 +29,7 @@ export default function BlogPage() {
       }
       const data = await response.json();
       setPosts(data);
-      // Initialize filtered posts excluding banner posts
+      // Initialize filtered posts excluding only banner posts, keep featured posts
       setFilteredPosts(data.filter((post: BlogPost) => !post.isBanner));
     } catch (err: any) {
       setError(err.message);
@@ -111,6 +111,24 @@ export default function BlogPage() {
       {/* Banner Section */}
       <BlogBanner posts={posts} />
 
+      {/* Featured Articles Section */}
+      <section className="py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <h2 className="text-3xl font-bold text-white mb-8">Featured Articles</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {posts.filter(post => post.isFeatured).map((post, index) => (
+                <BlogCard key={`featured-${post._id}`} post={post} index={index} />
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Search and Categories Section */}
       <section className="py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center">
@@ -164,18 +182,6 @@ export default function BlogPage() {
             </motion.div>
           ) : (
             <>
-              {/* Featured Posts */}
-              {featuredPosts.length > 0 && (
-                <div className="mb-16">
-                  <h2 className="text-2xl font-bold text-white mb-8">Featured Articles</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {featuredPosts.slice(0, displayCount).map((post, index) => (
-                      <BlogCard key={`featured-${post._id}`} post={post} index={index} />
-                    ))}
-                  </div>
-                </div>
-              )}
-
               {/* Regular Posts */}
               {regularPosts.length > 0 && (
                 <div>
