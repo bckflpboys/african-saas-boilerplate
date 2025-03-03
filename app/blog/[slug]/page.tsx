@@ -142,14 +142,6 @@ export default function BlogPost() {
                   /<h1>/g, '<h1 style="font-size: 2.25rem; font-weight: 700; color: white; margin-bottom: 1.5rem; line-height: 1.2;">'
                 ).replace(
                   /<h2>/g, '<h2 style="font-size: 1.875rem; font-weight: 600; color: white; margin-bottom: 1rem; line-height: 1.3;">'
-                ).replace(
-                  /<p><\/p>/g, '<p style="margin-top: 2rem;"></p>'
-                ).replace(
-                  /<ul>/g, '<ul style="list-style-type: disc; padding-left: 1.5rem; margin: 1rem 0;">'
-                ).replace(
-                  /<ol>/g, '<ol style="list-style-type: decimal; padding-left: 1.5rem; margin: 1rem 0;">'
-                ).replace(
-                  /<li>/g, '<li style="margin-bottom: 0.5rem; color: #D1D5DB;">'
                 )
               }} 
               className="prose prose-lg prose-invert max-w-none [&>p]:mb-4" 
