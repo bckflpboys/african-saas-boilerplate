@@ -252,6 +252,16 @@ const MenuBar = ({ editor }: any) => {
 
   return (
     <>
+      <style jsx global>{`
+        .ProseMirror ul {
+          list-style-type: disc;
+          padding-left: 1.5em;
+        }
+        .ProseMirror ol {
+          list-style-type: decimal;
+          padding-left: 1.5em;
+        }
+      `}</style>
       <div className="flex flex-wrap gap-2 p-2 bg-gray-800 border-b border-gray-700 rounded-t-md">
         <div className="flex items-center gap-2 border-r border-gray-700 pr-2 mr-2">
           <button
@@ -573,13 +583,6 @@ export default function CreateBlogPost() {
         },
       }),
     ],
-    content: formData.content,
-    onUpdate: ({ editor }) => {
-      const content = editor.getHTML()
-        .replace(/<h1[^>]*>/g, '<h1>')  // Clean any extra attributes from h1
-        .replace(/<h2[^>]*>/g, '<h2>'); // Clean any extra attributes from h2
-      debouncedContentUpdate(content);
-    },
     editorProps: {
       attributes: {
         class: [
@@ -595,6 +598,14 @@ export default function CreateBlogPost() {
           'prose-pre:bg-gray-800 prose-pre:p-4 prose-pre:rounded-lg'
         ].join(' '),
       },
+    },
+    content: formData.content,
+    onUpdate: ({ editor }) => {
+      const html = editor.getHTML()
+        .replace(/<ul>/g, '<ul style="list-style-type: disc; padding-left: 1.5rem; margin: 1rem 0;">')
+        .replace(/<ol>/g, '<ol style="list-style-type: decimal; padding-left: 1.5rem; margin: 1rem 0;">')
+        .replace(/<li>/g, '<li style="margin-bottom: 0.5rem; color: #D1D5DB;">');
+      debouncedContentUpdate(html);
     },
     immediatelyRender: false,
   });
