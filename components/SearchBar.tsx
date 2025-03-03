@@ -81,7 +81,7 @@ export default function SearchBar({ onSearch, posts, className = '' }: SearchBar
             <ul className="divide-y divide-gray-700">
               {suggestions.map((post) => (
                 <motion.li
-                  key={post.id}
+                  key={post._id}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   className="group hover:bg-gray-700/50 transition-colors"
