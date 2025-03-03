@@ -122,7 +122,12 @@ export default function BlogPage() {
             <h2 className="text-3xl font-bold text-white mb-8">Featured Articles</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {posts.filter(post => post.isFeatured).map((post, index) => (
-                <BlogCard key={`featured-${post._id}`} post={post} index={index} />
+                <BlogCard 
+                  key={`featured-${post._id}`} 
+                  post={post} 
+                  index={index}
+                  priority={index === 0} 
+                />
               ))}
             </div>
           </motion.div>

@@ -20,9 +20,10 @@ export interface BlogPost {
 interface BlogCardProps {
   post: BlogPost;
   index: number;
+  priority?: boolean;
 }
 
-export default function BlogCard({ post, index }: BlogCardProps) {
+export default function BlogCard({ post, index, priority = false }: BlogCardProps) {
   // Default images
   const defaultCoverImage = "https://images.unsplash.com/photo-1563986768494-4dee2763ff3f?q=80&w=1600&auto=format&fit=crop";
 
@@ -50,6 +51,7 @@ export default function BlogCard({ post, index }: BlogCardProps) {
             alt={post.title}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            priority={priority}
             className="object-cover transition-all duration-500 group-hover:scale-110"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
