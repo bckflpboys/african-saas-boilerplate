@@ -45,6 +45,19 @@ export default function BlogPost() {
     }
   };
 
+  const handleShare = (platform: string) => {
+    const url = window.location.href;
+    const text = post?.title;
+    
+    const shareUrls = {
+      Twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text || '')}`,
+      Reddit: `https://www.reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent(text || '')}`,
+      Facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`
+    };
+
+    window.open(shareUrls[platform as keyof typeof shareUrls], '_blank', 'width=600,height=400');
+  };
+
   if (loading) {
     return (
       <div className="bg-black-bg min-h-screen flex flex-col">
@@ -96,27 +109,16 @@ export default function BlogPost() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                <span className="inline-block px-4 py-1 bg-primary/90 text-white rounded-full text-sm font-medium mb-4">
+                <span className="inline-block px-3 py-1 text-xs font-medium bg-primary/10 text-primary rounded-full mb-4">
                   {post.category}
                 </span>
                 <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 max-w-4xl">
                   {post.title}
                 </h1>
                 <div className="flex items-center gap-4">
-                  <div className="relative w-12 h-12 rounded-full overflow-hidden">
-                    <Image
-                      src={`https://ui-avatars.com/api/?name=${encodeURIComponent(post.author)}&background=10B981&color=fff`}
-                      alt={post.author}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                  <div>
-                    <p className="text-white font-medium">{post.author}</p>
-                    <p className="text-gray-300">
-                      {new Date(post.createdAt).toLocaleDateString()} · {post.readingTime}
-                    </p>
-                  </div>
+                  <p className="text-gray-300">
+                    {new Date(post.createdAt).toLocaleDateString()} · {post.readingTime}
+                  </p>
                 </div>
               </motion.div>
             </div>
@@ -141,12 +143,16 @@ export default function BlogPost() {
           <div className="mt-12 pt-8 border-t border-gray-800">
             <h3 className="text-white font-semibold mb-4">Share this article</h3>
             <div className="flex gap-4">
-              {['Twitter', 'LinkedIn', 'Facebook'].map(platform => (
+              {['Twitter', 'Reddit', 'Facebook'].map(platform => (
                 <button
                   key={platform}
-                  className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-full text-sm transition-colors"
+                  onClick={() => handleShare(platform)}
+                  className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-full text-sm transition-colors flex items-center gap-2"
                 >
                   Share on {platform}
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                  </svg>
                 </button>
               ))}
             </div>
