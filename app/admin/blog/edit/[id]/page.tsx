@@ -470,7 +470,7 @@ export default function EditBlogPost({ params }: { params: Promise<{ id: string 
       return;
     }
     fetchBlogPost();
-  }, [session, id]);
+  }, [session, id, router]);
 
   const fetchBlogPost = async () => {
     try {
@@ -584,7 +584,7 @@ export default function EditBlogPost({ params }: { params: Promise<{ id: string 
         readingTime: calculateReadingTime(content)
       }));
     }, 500),
-    []
+    [calculateReadingTime]
   );
 
   const editor = useEditor({
@@ -639,7 +639,7 @@ export default function EditBlogPost({ params }: { params: Promise<{ id: string 
       debouncedContentUpdate(html);
     },
     immediatelyRender: false
-  }, [formData.content]);
+  }, [formData.content, debouncedContentUpdate]);
 
   const handleTagAdd = () => {
     if (tagInput.trim() && !formData.tags.includes(tagInput.trim())) {
@@ -771,61 +771,6 @@ export default function EditBlogPost({ params }: { params: Promise<{ id: string 
           <p className="mt-1 text-sm text-gray-400">
             Only administrators can edit the author name. Click "Set as Admin" to quickly set yourself as the author.
           </p>
-        </div>
-
-        <div>
-          <label htmlFor="coverImage" className="block text-sm font-medium text-gray-300">
-            Cover Image
-          </label>
-          <p className="text-sm text-gray-400 mb-2">
-            Upload an image or provide a URL for your blog post cover
-          </p>
-          <div className="space-y-2">
-            <div className="flex gap-2">
-              <input
-                type="text"
-                id="coverImage"
-                value={formData.coverImage}
-                onChange={(e) => setFormData({ ...formData, coverImage: e.target.value })}
-                placeholder="Enter image URL or upload a file"
-                className="flex-1 rounded-md border border-gray-700 bg-gray-800 text-white shadow-sm px-4 py-2 focus:border-primary focus:ring-primary sm:text-sm"
-              />
-              <input
-                type="file"
-                ref={coverImageRef}
-                onChange={handleCoverImageUpload}
-                accept="image/*"
-                className="hidden"
-              />
-              <button
-                type="button"
-                onClick={() => coverImageRef.current?.click()}
-                className="flex items-center gap-1 px-4 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600"
-              >
-                <PhotoIcon className="h-5 w-5" />
-                <span>Upload</span>
-              </button>
-            </div>
-            {formData.coverImage && (
-              <div className="relative rounded-lg overflow-hidden border border-gray-700 aspect-[16/9] max-w-xl">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={formData.coverImage}
-                  alt="Cover preview"
-                  className="object-cover w-full h-full"
-                />
-                <button
-                  type="button"
-                  onClick={() => setFormData(prev => ({ ...prev, coverImage: '' }))}
-                  className="absolute top-2 right-2 p-1 bg-red-500/80 text-white rounded-full hover:bg-red-500"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                  </svg>
-                </button>
-              </div>
-            )}
-          </div>
         </div>
 
         <div>

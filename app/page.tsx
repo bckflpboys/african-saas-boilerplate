@@ -122,6 +122,11 @@ export default function Home() {
         </div>
       </div>
 
+      {/* Pricing Section */}
+      <div className="border-t border-gray-800">
+        <PricingSection />
+      </div>
+
       {/* Blog Section */}
       <div className="border-t border-gray-800">
         <BlogSection 

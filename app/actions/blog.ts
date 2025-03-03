@@ -2,17 +2,6 @@
 
 import cloudinary from '@/lib/cloudinary';
 
-interface BlogPostData {
-  title: string;
-  excerpt: string;
-  content: string;
-  coverImage: string;
-  category: string;
-  readingTime: string;
-  tags: string[];
-  author: string;
-}
-
 interface BlogPostForm {
   title: string;
   excerpt: string;

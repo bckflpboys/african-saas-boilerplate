@@ -22,7 +22,6 @@ interface BlogPost {
 export default function BlogManagementPage() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 5;
   
@@ -41,6 +40,11 @@ export default function BlogManagementPage() {
     fetchPosts();
   }, [session, status]);
 
+  const handleError = (error: Error) => {
+    console.error('Error:', error);
+    toast.error('An error occurred while fetching blog posts');
+  };
+
   const fetchPosts = async () => {
     try {
       const response = await fetch('/api/blog/posts');
@@ -53,9 +57,8 @@ export default function BlogManagementPage() {
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       );
       setPosts(sortedPosts);
-    } catch (err: any) {
-      setError(err.message);
-      toast.error('Failed to fetch blog posts');
+    } catch (error) {
+      handleError(error as Error);
     } finally {
       setLoading(false);
     }
@@ -78,8 +81,8 @@ export default function BlogManagementPage() {
       // Update local state instead of refetching
       setPosts(prevPosts => prevPosts.filter(post => post._id !== postId));
       toast.success('Post deleted successfully');
-    } catch (err: any) {
-      toast.error('Failed to delete post');
+    } catch (error) {
+      handleError(error as Error);
     }
   };
 
@@ -108,27 +111,6 @@ export default function BlogManagementPage() {
           </div>
           <div className="flex items-center justify-center h-64">
             <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-black-bg p-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold text-white">Blog Management</h1>
-            <Link
-              href="/admin/blog/create"
-              className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
-            >
-              Create New Post
-            </Link>
-          </div>
-          <div className="bg-red-500/10 border border-red-500 rounded-lg p-4">
-            <p className="text-red-500">{error}</p>
           </div>
         </div>
       </div>

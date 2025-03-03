@@ -438,7 +438,7 @@ const BLOG_CATEGORIES = [
 
 export default function CreateBlogPost() {
   const router = useRouter();
-  const { data: session } = useSession({
+  const { data } = useSession({
     required: true,
     onUnauthenticated() {
       router.push('/auth/signin?callbackUrl=/admin/blog/create');
