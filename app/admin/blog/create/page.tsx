@@ -95,7 +95,7 @@ const MediaModal = ({ isOpen, onClose, onSubmit, type, title }: MediaModalProps)
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder={`Enter ${type} URL`}
-                className="flex-1 rounded-md border border-gray-700 bg-gray-900 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                className="flex-1 rounded-md border border-gray-700 bg-gray-900 text-white px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
               />
               <input
                 type="file"
@@ -661,7 +661,7 @@ export default function CreateBlogPost() {
             id="title"
             value={formData.title}
             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-            className="mt-1 block w-full rounded-md border border-gray-700 bg-gray-800 text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+            className="mt-1 block w-full rounded-md border border-gray-700 bg-gray-800 text-white shadow-sm px-4 py-2 focus:border-primary focus:ring-primary sm:text-sm"
             required
           />
         </div>
@@ -679,7 +679,7 @@ export default function CreateBlogPost() {
             maxLength={160}
             value={formData.excerpt}
             onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
-            className="mt-1 block w-full rounded-md border border-gray-700 bg-gray-800 text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+            className="mt-1 block w-full rounded-md border border-gray-700 bg-gray-800 text-white shadow-sm px-4 py-2 focus:border-primary focus:ring-primary sm:text-sm"
             placeholder="Enter a compelling summary of your post to attract readers..."
             required
           />
@@ -696,7 +696,7 @@ export default function CreateBlogPost() {
             id="category"
             value={formData.category}
             onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-            className="mt-1 block w-full rounded-md border border-gray-700 bg-gray-800 text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+            className="mt-1 block w-full rounded-md border border-gray-700 bg-gray-800 text-white shadow-sm px-4 py-2 focus:border-primary focus:ring-primary sm:text-sm"
           >
             <option value="">Select a category</option>
             {BLOG_CATEGORIES.map(category => (
@@ -715,7 +715,7 @@ export default function CreateBlogPost() {
               id="author"
               value={formData.author}
               onChange={(e) => setFormData({ ...formData, author: e.target.value })}
-              className="block w-full rounded-md border border-gray-700 bg-gray-800 text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+              className="block w-full rounded-md border border-gray-700 bg-gray-800 text-white shadow-sm px-4 py-2 focus:border-primary focus:ring-primary sm:text-sm"
               placeholder="Enter author name"
             />
             <button
@@ -746,7 +746,7 @@ export default function CreateBlogPost() {
                 value={formData.coverImage}
                 onChange={(e) => setFormData({ ...formData, coverImage: e.target.value })}
                 placeholder="Enter image URL or upload a file"
-                className="flex-1 rounded-md border border-gray-700 bg-gray-800 text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                className="flex-1 rounded-md border border-gray-700 bg-gray-800 text-white shadow-sm px-4 py-2 focus:border-primary focus:ring-primary sm:text-sm"
               />
               <input
                 type="file"
@@ -814,7 +814,7 @@ export default function CreateBlogPost() {
               onChange={(e) => setTagInput(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleTagAdd())}
               placeholder="Add a tag"
-              className="flex-1 rounded-md border border-gray-700 bg-gray-800 text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+              className="flex-1 rounded-md border border-gray-700 bg-gray-800 text-white shadow-sm px-4 py-2 focus:border-primary focus:ring-primary sm:text-sm"
             />
             <button
               type="button"
