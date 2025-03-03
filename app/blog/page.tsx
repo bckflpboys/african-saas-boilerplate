@@ -1,30 +1,51 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BlogCard, { BlogPost } from "@/components/BlogCard";
 import SearchBar from "@/components/SearchBar";
 import BlogBanner from "@/components/BlogBanner";
-import { sampleBlogPosts } from "@/components/BlogSection";
 
 export default function BlogPage() {
-  const [filteredPosts, setFilteredPosts] = useState<BlogPost[]>(
-    sampleBlogPosts.filter(post => !post.isBanner)
-  );
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [filteredPosts, setFilteredPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [displayCount, setDisplayCount] = useState(6);
   const [activeCategory, setActiveCategory] = useState('All');
   const categories = ['All', 'Development', 'Payments', 'Performance', 'Security'];
 
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  const fetchPosts = async () => {
+    try {
+      const response = await fetch('/api/blog/posts');
+      if (!response.ok) {
+        throw new Error('Failed to fetch posts');
+      }
+      const data = await response.json();
+      setPosts(data);
+      // Initialize filtered posts excluding banner posts
+      setFilteredPosts(data.filter((post: BlogPost) => !post.isBanner));
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSearch = (searchTerm: string) => {
     if (!searchTerm.trim()) {
-      setFilteredPosts(sampleBlogPosts.filter(post => !post.isBanner));
+      setFilteredPosts(posts.filter(post => !post.isBanner));
       setDisplayCount(6);
       return;
     }
 
-    const filtered = sampleBlogPosts.filter(post =>
+    const filtered = posts.filter(post =>
       !post.isBanner && (
         post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         post.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -39,9 +60,9 @@ export default function BlogPage() {
     setActiveCategory(category);
     setDisplayCount(6);
     if (category === 'All') {
-      setFilteredPosts(sampleBlogPosts.filter(post => !post.isBanner));
+      setFilteredPosts(posts.filter(post => !post.isBanner));
     } else {
-      const filtered = sampleBlogPosts.filter(post => 
+      const filtered = posts.filter(post => 
         !post.isBanner && post.category === category
       );
       setFilteredPosts(filtered);
@@ -52,6 +73,33 @@ export default function BlogPage() {
     setDisplayCount(prev => prev + 6);
   };
 
+  if (loading) {
+    return (
+      <div className="bg-black-bg min-h-screen flex flex-col">
+        <Navbar />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-black-bg min-h-screen flex flex-col">
+        <Navbar />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center text-red-500">
+            <h2 className="text-2xl font-bold mb-2">Error</h2>
+            <p>{error}</p>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
   // Separate featured posts
   const featuredPosts = filteredPosts.filter(post => post.isFeatured);
   const regularPosts = filteredPosts.filter(post => !post.isFeatured);
@@ -61,7 +109,7 @@ export default function BlogPage() {
       <Navbar />
 
       {/* Banner Section */}
-      <BlogBanner posts={sampleBlogPosts} />
+      <BlogBanner posts={posts} />
 
       {/* Search and Categories Section */}
       <section className="py-12 px-4 sm:px-6 lg:px-8">
@@ -74,7 +122,7 @@ export default function BlogPage() {
             {/* Search Bar */}
             <SearchBar
               onSearch={handleSearch}
-              posts={sampleBlogPosts.filter(post => !post.isBanner)}
+              posts={posts.filter(post => !post.isBanner)}
               className="max-w-2xl mx-auto"
             />
           </motion.div>
@@ -122,7 +170,7 @@ export default function BlogPage() {
                   <h2 className="text-2xl font-bold text-white mb-8">Featured Articles</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {featuredPosts.slice(0, displayCount).map((post, index) => (
-                      <BlogCard key={`featured-${post.id}`} post={post} index={index} />
+                      <BlogCard key={`featured-${post._id}`} post={post} index={index} />
                     ))}
                   </div>
                 </div>
@@ -134,7 +182,7 @@ export default function BlogPage() {
                   <h2 className="text-2xl font-bold text-white mb-8">Latest Articles</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {regularPosts.slice(0, displayCount).map((post, index) => (
-                      <BlogCard key={`regular-${post.id}`} post={post} index={index} />
+                      <BlogCard key={`regular-${post._id}`} post={post} index={index} />
                     ))}
                   </div>
                 </div>

@@ -4,7 +4,10 @@ const nextConfig = {
     serverActions: true,
   },
   images: {
-    domains: ['res.cloudinary.com'],
+    domains: ['res.cloudinary.com', 'images.unsplash.com', 'ui-avatars.com'],
+    dangerouslyAllowSVG: true,
+    contentDispositionType: 'attachment',
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
   env: {
     CLOUDINARY_CLOUD_NAME: 'dplophecq',

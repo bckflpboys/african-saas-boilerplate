@@ -13,50 +13,59 @@ interface BlogPostData {
   author: string;
 }
 
-export async function uploadToCloudinary(file: string) {
-  try {
-    // Generate a unique ID for this upload
-    const uploadId = Date.now().toString();
-    
-    // Upload the file to Cloudinary
-    const result = await cloudinary.uploader.upload(file, {
-      resource_type: "auto", // Automatically detect if it's image, video, or raw
-      folder: `blog-uploads/${uploadId}`, // Organize uploads in folders
-      use_filename: true, // Use the original filename
-      unique_filename: true, // Ensure filename is unique
-    });
+interface BlogPostForm {
+  title: string;
+  excerpt: string;
+  content: string;
+  coverImage: string;
+  category: string;
+  readingTime: string;
+  tags: string[];
+  author: string;
+}
 
-    if (!result || !result.secure_url) {
-      throw new Error('Failed to get upload URL from Cloudinary');
-    }
+export interface CreateBlogPostParams extends BlogPostForm {
+  blogId: string;
+  content: string;
+  coverImage: string;
+  isBanner: boolean;
+  isFeatured: boolean;
+}
+
+export async function uploadToCloudinary(file: string, blogId: string, type: 'cover' | 'content') {
+  try {
+    const result = await cloudinary.uploader.upload(file, {
+      resource_type: "auto",
+      folder: `blogs/blog-${blogId}/${type}`,
+      use_filename: true,
+      unique_filename: true,
+    });
 
     return result.secure_url;
   } catch (error) {
     console.error('Error uploading to Cloudinary:', error);
-    throw error; // Throw the actual error for better debugging
+    throw error;
   }
 }
 
-export async function createBlogPost(data: BlogPostData) {
+export async function createBlogPost(params: CreateBlogPostParams) {
   try {
-    // Generate a unique ID for this blog post
-    const blogId = Date.now().toString();
+    let content = params.content;
     
     // Extract all media URLs from the content
     const mediaRegex = /data:(image|video|audio)\/[^;]+;base64[^"]+/g;
-    let content = data.content;
     const mediaMatches = content.match(mediaRegex) || [];
 
-    // Upload each media file to Cloudinary in its respective folder
+    // Upload each media file to Cloudinary
     for (const mediaUrl of mediaMatches) {
-      const cloudinaryUrl = await uploadToCloudinary(mediaUrl);
+      const cloudinaryUrl = await uploadToCloudinary(mediaUrl, params.blogId, 'content');
       content = content.replace(mediaUrl, cloudinaryUrl);
     }
 
     // Upload cover image if it's a base64 string
-    let coverImageUrl = data.coverImage;
-    if (data.coverImage.startsWith('data:')) {
-      coverImageUrl = await uploadToCloudinary(data.coverImage);
+    let coverImageUrl = params.coverImage;
+    if (params.coverImage.startsWith('data:')) {
+      coverImageUrl = await uploadToCloudinary(params.coverImage, params.blogId, 'cover');
     }
 
     // Create the blog post
@@ -67,10 +76,11 @@ export async function createBlogPost(data: BlogPostData) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        ...data,
+        ...params,
         content,
         coverImage: coverImageUrl,
-        blogId, // Store the blogId for future reference
+        isBanner: Boolean(params.isBanner),
+        isFeatured: Boolean(params.isFeatured)
       }),
     });
 

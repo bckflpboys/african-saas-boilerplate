@@ -1,18 +1,63 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { sampleBlogPosts } from "@/components/BlogSection";
+
+interface BlogPost {
+  _id: string;
+  title: string;
+  content: string;
+  excerpt: string;
+  coverImage: string;
+  category: string;
+  author: string;
+  createdAt: string;
+  readingTime: string;
+}
 
 export default function BlogPost() {
   const params = useParams();
-  const post = sampleBlogPosts.find(post => post.slug === params.slug);
+  const [post, setPost] = useState<BlogPost | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  if (!post) {
+  useEffect(() => {
+    fetchPost();
+  }, [params.slug]);
+
+  const fetchPost = async () => {
+    try {
+      const response = await fetch(`/api/blog/posts/${params.slug}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch blog post');
+      }
+      const data = await response.json();
+      setPost(data);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="bg-black-bg min-h-screen flex flex-col">
+        <Navbar />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error || !post) {
     return (
       <div className="bg-black-bg min-h-screen flex flex-col">
         <Navbar />
@@ -37,7 +82,7 @@ export default function BlogPost() {
         {/* Hero Section */}
         <div className="relative h-[70vh] min-h-[500px]">
           <Image
-            src={post.imageUrl}
+            src={post.coverImage}
             alt={post.title}
             fill
             className="object-cover"
@@ -60,15 +105,17 @@ export default function BlogPost() {
                 <div className="flex items-center gap-4">
                   <div className="relative w-12 h-12 rounded-full overflow-hidden">
                     <Image
-                      src={post.author.image}
-                      alt={post.author.name}
+                      src={`https://ui-avatars.com/api/?name=${encodeURIComponent(post.author)}&background=10B981&color=fff`}
+                      alt={post.author}
                       fill
                       className="object-cover"
                     />
                   </div>
                   <div>
-                    <p className="text-white font-medium">{post.author.name}</p>
-                    <p className="text-gray-300">{post.publishDate} · {post.readTime} read</p>
+                    <p className="text-white font-medium">{post.author}</p>
+                    <p className="text-gray-300">
+                      {new Date(post.createdAt).toLocaleDateString()} · {post.readingTime}
+                    </p>
                   </div>
                 </div>
               </motion.div>
@@ -87,10 +134,7 @@ export default function BlogPost() {
             <p className="text-xl text-gray-300 mb-8">
               {post.excerpt}
             </p>
-            <p className="text-gray-400">
-              This is a sample blog post content. In a real application, this would be populated with the full article content from your CMS or database.
-            </p>
-            {/* Add more sample content here */}
+            <div dangerouslySetInnerHTML={{ __html: post.content }} />
           </motion.div>
 
           {/* Share Section */}

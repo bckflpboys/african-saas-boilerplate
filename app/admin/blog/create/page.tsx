@@ -18,6 +18,7 @@ import {
 import { createBlogPost, uploadToCloudinary } from '@/app/actions/blog';
 import { debounce } from 'lodash';
 import readingTime from 'reading-time';
+import { Switch } from '@headlessui/react';
 
 interface BlogPostForm {
   title: string;
@@ -28,6 +29,8 @@ interface BlogPostForm {
   readingTime: string;
   tags: string[];
   author: string;
+  isBanner: boolean;
+  isFeatured: boolean;
 }
 
 interface MediaModalProps {
@@ -438,7 +441,9 @@ export default function CreateBlogPost() {
     category: '',
     readingTime: '',
     tags: [],
-    author: ''
+    author: '',
+    isBanner: false,
+    isFeatured: false
   });
   const [tagInput, setTagInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -454,17 +459,11 @@ export default function CreateBlogPost() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Validate required fields
-    if (!formData.title || !formData.excerpt || !formData.content || !formData.category || !formData.author) {
-      setError('Please fill in all required fields');
-      return;
-    }
-
     setLoading(true);
     setError('');
 
     try {
+      const blogId = Date.now().toString();
       // Extract all media URLs from the content
       const mediaRegex = /src="(blob:[^"]+)"/g;
       let content = editor?.getHTML() || '';
@@ -473,70 +472,59 @@ export default function CreateBlogPost() {
       // Upload each blob URL to Cloudinary
       for (const match of mediaMatches) {
         const blobUrl = match[1];
-        try {
-          // Fetch the blob
-          const response = await fetch(blobUrl);
-          const blob = await response.blob();
-          
-          // Convert blob to base64
-          const base64 = await new Promise<string>((resolve) => {
-            const reader = new FileReader();
-            reader.onloadend = () => resolve(reader.result as string);
-            reader.readAsDataURL(blob);
-          });
+        // Fetch the blob
+        const response = await fetch(blobUrl);
+        const blob = await response.blob();
+        
+        // Convert blob to base64
+        const base64 = await new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.readAsDataURL(blob);
+        });
 
-          // Upload to Cloudinary
-          try {
-            const cloudinaryUrl = await uploadToCloudinary(base64);
-            // Replace blob URL with Cloudinary URL
-            content = content.replace(blobUrl, cloudinaryUrl);
-          } catch (uploadError: any) {
-            console.error('Failed to upload media:', uploadError);
-            setError(uploadError.message || 'Failed to upload media');
-            return;
-          }
-        } catch (error) {
-          console.error('Error processing media:', error);
-          setError('Failed to process media file');
-          return;
-        }
+        // Upload to Cloudinary
+        const cloudinaryUrl = await uploadToCloudinary(base64, blogId, 'content');
+        // Replace blob URL with Cloudinary URL
+        content = content.replace(blobUrl, cloudinaryUrl);
       }
 
       // Upload cover image if it's a blob URL
       let coverImage = formData.coverImage;
       if (coverImage.startsWith('blob:')) {
-        try {
-          const response = await fetch(coverImage);
-          const blob = await response.blob();
-          const base64 = await new Promise<string>((resolve) => {
-            const reader = new FileReader();
-            reader.onloadend = () => resolve(reader.result as string);
-            reader.readAsDataURL(blob);
-          });
-          try {
-            coverImage = await uploadToCloudinary(base64);
-          } catch (uploadError: any) {
-            console.error('Failed to upload cover image:', uploadError);
-            setError(uploadError.message || 'Failed to upload cover image');
-            return;
-          }
-        } catch (error) {
-          console.error('Error processing cover image:', error);
-          setError('Failed to process cover image');
-          return;
-        }
+        const response = await fetch(coverImage);
+        const blob = await response.blob();
+        const base64 = await new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.readAsDataURL(blob);
+        });
+        coverImage = await uploadToCloudinary(base64, blogId, 'cover');
       }
+
+      console.log('Submitting blog post with data:', {
+        ...formData,
+        content,
+        coverImage,
+        blogId,
+        isBanner: formData.isBanner,
+        isFeatured: formData.isFeatured
+      });
 
       // Create blog post with Cloudinary URLs
       const result = await createBlogPost({
         ...formData,
         content,
         coverImage,
+        blogId,
+        isBanner: formData.isBanner,
+        isFeatured: formData.isFeatured
       });
 
       // Redirect to the blog list page
       router.push('/admin/blog');
     } catch (error: any) {
+      console.error('Error creating blog post:', error);
       setError(error.message || 'Failed to create blog post');
     } finally {
       setLoading(false);
@@ -706,11 +694,9 @@ export default function CreateBlogPost() {
             className="mt-1 block w-full rounded-md border border-gray-700 bg-gray-800 text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
           >
             <option value="">Select a category</option>
-            <option value="Technology">Technology</option>
-            <option value="Business">Business</option>
-            <option value="Marketing">Marketing</option>
-            <option value="Design">Design</option>
-            <option value="Development">Development</option>
+            {BLOG_CATEGORIES.map(category => (
+              <option key={category} value={category}>{category}</option>
+            ))}
           </select>
         </div>
 
@@ -846,6 +832,42 @@ export default function CreateBlogPost() {
           <div className="prose-editor border border-gray-700 rounded-md bg-gray-800">
             <MenuBar editor={editor} />
             <EditorContent editor={editor} />
+          </div>
+        </div>
+
+        <div className="flex gap-8">
+          <div className="flex items-center gap-3">
+            <Switch
+              checked={formData.isBanner}
+              onChange={() => setFormData(prev => ({ ...prev, isBanner: !prev.isBanner }))}
+              className={`${
+                formData.isBanner ? 'bg-primary' : 'bg-gray-700'
+              } relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-gray-800`}
+            >
+              <span
+                className={`${
+                  formData.isBanner ? 'translate-x-6' : 'translate-x-1'
+                } inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
+              />
+            </Switch>
+            <span className="text-sm font-medium text-gray-300">Show in Banner</span>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <Switch
+              checked={formData.isFeatured}
+              onChange={() => setFormData(prev => ({ ...prev, isFeatured: !prev.isFeatured }))}
+              className={`${
+                formData.isFeatured ? 'bg-primary' : 'bg-gray-700'
+              } relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-gray-800`}
+            >
+              <span
+                className={`${
+                  formData.isFeatured ? 'translate-x-6' : 'translate-x-1'
+                } inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
+              />
+            </Switch>
+            <span className="text-sm font-medium text-gray-300">Featured Post</span>
           </div>
         </div>
 

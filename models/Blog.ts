@@ -1,6 +1,22 @@
-import mongoose from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 
-const blogSchema = new mongoose.Schema({
+interface IBlog extends Document {
+  blogId: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  coverImage: string;
+  category: string;
+  readingTime: string;
+  tags: string[];
+  author: string;
+  isBanner: boolean;
+  isFeatured: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const blogSchema = new mongoose.Schema<IBlog>({
   blogId: {
     type: String,
     required: true,
@@ -37,6 +53,16 @@ const blogSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Author is required'],
   },
+  isBanner: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
+  isFeatured: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
@@ -45,8 +71,31 @@ const blogSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   }
+}, {
+  timestamps: true,
+  strict: true,
+  validateBeforeSave: true,
 });
 
-const Blog = mongoose.models.Blog || mongoose.model('Blog', blogSchema);
+// Ensure boolean fields are properly set before saving
+blogSchema.pre('save', function(next) {
+  if (typeof this.isBanner !== 'undefined') {
+    this.isBanner = Boolean(this.isBanner);
+  }
+  if (typeof this.isFeatured !== 'undefined') {
+    this.isFeatured = Boolean(this.isFeatured);
+  }
+  next();
+});
+
+// Add a method to properly serialize the document
+blogSchema.methods.toJSON = function() {
+  const obj = this.toObject();
+  obj.isBanner = Boolean(obj.isBanner);
+  obj.isFeatured = Boolean(obj.isFeatured);
+  return obj;
+};
+
+const Blog = mongoose.models.Blog as mongoose.Model<IBlog> || mongoose.model<IBlog>('Blog', blogSchema);
 
 export default Blog;

@@ -26,6 +26,15 @@ export default function BlogBanner({ posts }: BlogBannerProps) {
 
   if (bannerPosts.length === 0) return null;
 
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    });
+  };
+
   return (
     <div className="relative w-full h-[400px] overflow-hidden">
       {/* Slides */}
@@ -39,7 +48,7 @@ export default function BlogBanner({ posts }: BlogBannerProps) {
           className="relative w-full h-full"
         >
           <Image
-            src={bannerPosts[currentIndex].imageUrl}
+            src={bannerPosts[currentIndex].coverImage}
             alt={bannerPosts[currentIndex].title}
             fill
             className="object-cover"
@@ -56,6 +65,23 @@ export default function BlogBanner({ posts }: BlogBannerProps) {
                 transition={{ delay: 0.2 }}
                 className="max-w-2xl"
               >
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="flex items-center gap-2">
+                    <Image
+                      src={`https://ui-avatars.com/api/?name=${encodeURIComponent(bannerPosts[currentIndex].author)}&background=10B981&color=fff`}
+                      alt={bannerPosts[currentIndex].author}
+                      width={32}
+                      height={32}
+                      className="rounded-full"
+                    />
+                    <span className="text-sm text-gray-300">{bannerPosts[currentIndex].author}</span>
+                  </div>
+                  <span className="text-sm text-gray-400">·</span>
+                  <span className="text-sm text-gray-300">{formatDate(bannerPosts[currentIndex].createdAt)}</span>
+                  <span className="text-sm text-gray-400">·</span>
+                  <span className="text-sm text-gray-300">{bannerPosts[currentIndex].readingTime}</span>
+                </div>
+
                 <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-3">
                   {bannerPosts[currentIndex].title}
                 </h2>
@@ -63,7 +89,7 @@ export default function BlogBanner({ posts }: BlogBannerProps) {
                   {bannerPosts[currentIndex].excerpt}
                 </p>
                 <Link
-                  href={`/blog/${bannerPosts[currentIndex].slug}`}
+                  href={`/blog/${bannerPosts[currentIndex]._id}`}
                   className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-full text-sm font-medium hover:bg-primary/90 transition-colors"
                 >
                   Read Article
@@ -99,9 +125,7 @@ export default function BlogBanner({ posts }: BlogBannerProps) {
                   ? 'bg-primary w-6'
                   : 'bg-white/50 hover:bg-white/80'
               }`}
-            >
-              <span className="sr-only">Go to slide {index + 1}</span>
-            </button>
+            />
           ))}
         </div>
       )}

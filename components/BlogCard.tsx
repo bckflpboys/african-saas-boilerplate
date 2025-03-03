@@ -5,18 +5,14 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 export interface BlogPost {
-  id: string;
+  _id: string;
   title: string;
   excerpt: string;
   category: string;
-  author: {
-    name: string;
-    image: string;
-  };
-  publishDate: string;
-  readTime: string;
-  imageUrl: string;
-  slug: string;
+  author: string;
+  createdAt: string;
+  readingTime: string;
+  coverImage: string;
   isFeatured?: boolean;
   isBanner?: boolean;
 }
@@ -27,6 +23,20 @@ interface BlogCardProps {
 }
 
 export default function BlogCard({ post, index }: BlogCardProps) {
+  // Default images
+  const defaultCoverImage = "https://images.unsplash.com/photo-1563986768494-4dee2763ff3f?q=80&w=1600&auto=format&fit=crop";
+  const defaultAuthorImage = `https://ui-avatars.com/api/?name=${encodeURIComponent(post.author || 'User')}&background=10B981&color=fff`;
+
+  // Format date consistently
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    });
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -34,10 +44,10 @@ export default function BlogCard({ post, index }: BlogCardProps) {
       transition={{ delay: index * 0.1 }}
       className="group relative bg-gray-800 rounded-2xl overflow-hidden hover:shadow-xl transition-shadow duration-300 h-full"
     >
-      <Link href={`/blog/${post.slug}`} className="block h-full flex flex-col">
+      <Link href={`/blog/${post._id}`} className="block h-full flex flex-col">
         <div className="relative h-48 sm:h-56 overflow-hidden">
           <Image
-            src={post.imageUrl}
+            src={post.coverImage || defaultCoverImage}
             alt={post.title}
             fill
             className="object-cover transition-transform duration-300 group-hover:scale-105"
@@ -53,15 +63,17 @@ export default function BlogCard({ post, index }: BlogCardProps) {
           <div className="flex items-center gap-4 mb-4">
             <div className="relative w-8 h-8 rounded-full overflow-hidden">
               <Image
-                src={post.author.image}
-                alt={post.author.name}
+                src={defaultAuthorImage}
+                alt={post.author || 'Author'}
                 fill
                 className="object-cover"
               />
             </div>
             <div className="text-sm">
-              <p className="text-gray-300">{post.author.name}</p>
-              <p className="text-gray-500">{post.publishDate} · {post.readTime} read</p>
+              <p className="text-gray-300">{post.author || 'Anonymous'}</p>
+              <p className="text-gray-500">
+                {formatDate(post.createdAt)} · {post.readingTime}
+              </p>
             </div>
           </div>
 
