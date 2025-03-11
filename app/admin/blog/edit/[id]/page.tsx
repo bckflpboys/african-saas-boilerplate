@@ -879,6 +879,7 @@ export default function EditBlogPost({ params }: { params: Promise<{ id: string 
           </button>
         </div>
       </form>
+      <div className="text-sm text-gray-500">Click &ldquo;Save Draft&rdquo; to save your progress</div>
     </div>
   );
 }

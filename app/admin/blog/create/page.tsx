@@ -903,6 +903,7 @@ export default function CreateBlogPost() {
           </button>
         </div>
       </form>
+      <div className="text-sm text-gray-500">Click &ldquo;Save Draft&rdquo; to save your progress</div>
     </div>
   );
 }
